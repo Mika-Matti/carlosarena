@@ -38,6 +38,7 @@ io.on('connection', function(socket) {
       height: 40,
       width: 20,
       x: getRandomValue(10, 990),
+      //x: 500, // change later
       y: 200,
       speed: 10,
       yVelocity: 0,

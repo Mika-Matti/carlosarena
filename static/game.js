@@ -96,6 +96,10 @@ socket.on('clientid', function(data) {
   clientSocket = data;
 });
 
+let clientPlayerx = 0;
+let origo = 0;
+let offset = 0;
+
 socket.on('state', function(players) {
   //Draw players
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -104,11 +108,19 @@ socket.on('state', function(players) {
     let player = players[id];
     context.beginPath();
     if(player.id === clientSocket.id) {
-      //Make horizontal camera focus on client player
-      context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
+      if(origo === 0) { //Get the original spawn point
+        origo = scaleW*player.x; //Get the center point
+        offset = origo-500*scaleW-(player.width*scaleW)/2; //Checks how far the spawn coords are from 500
+      }
+      clientPlayerx = scaleW*player.x-origo; //Move everything based on origo. e.g origo-offset keeps player centered
+      context.strokeRect(origo-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Draw client player
+
     } else {
-      context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
+      context.strokeRect(scaleW*player.x-clientPlayerx-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Draw other players
     }
+    //Render 2 random pieces clientside, replace these later when you make a proper map
+    context.strokeRect(scaleW*20-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
+    context.strokeRect(scaleW*930-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
   }
 });
 
