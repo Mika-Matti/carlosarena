@@ -1,7 +1,6 @@
 //Connect client
 let socket = io({transports: ['websocket'], 
                 upgrade: false, });
-
 //Define player movement
 let movement = {
     up: false,
@@ -104,7 +103,12 @@ socket.on('state', function(players) {
   for (let id in players) { 
     let player = players[id];
     context.beginPath();
-    context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
+    if(player.id === clientSocket.id) {
+      //Make horizontal camera focus on client player
+      context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
+    } else {
+      context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
+    }
   }
 });
 
