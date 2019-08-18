@@ -3,7 +3,7 @@ let socket = io({transports: ['websocket'],
                 upgrade: false, });
 
 //Define player movement
-var movement = {
+let movement = {
     up: false,
     down: false,
     left: false,
@@ -58,24 +58,27 @@ setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
+//Client data
+let clientSocket = {};
+
 //Game canvas
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
-var origWidth = 1000;
-var origHeight = 500;
+let canvas = document.getElementById('canvas');
+let context = canvas.getContext('2d');
+let origWidth = 1000;
+let origHeight = 500;
 
 canvas.style.height = '100%';
-canvas.style.width=(canvas.style.height/origHeight)*origWidth+'%';
-var height = canvas.offsetHeight;
-var width = canvas.offsetWidth;
+canvas.style.width = (canvas.style.height/origHeight)*origWidth+'%';
+let height = canvas.offsetHeight;
+let width = canvas.offsetWidth;
 
 canvas.height = height;
 canvas.width = (height/origHeight)*origWidth;
 
-var scaleW = canvas.width / origWidth;
-var scaleH = canvas.height / origHeight;
+let scaleW = canvas.width / origWidth;
+let scaleH = canvas.height / origHeight;
 
-var scaleF = scaleW*scaleH;
+let scaleF = scaleW*scaleH;
 
 window.onresize = function(e) {
   width = canvas.offsetWidth;
@@ -89,13 +92,17 @@ window.onresize = function(e) {
 
   scaleF = scaleW*scaleH;
 }
+//Receive your socket id from server
+socket.on('clientid', function(data) {
+  clientSocket = data;
+});
 
 socket.on('state', function(players) {
   //Draw players
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.strokeStyle = 'black';
-  for (var id in players) { 
-    var player = players[id];
+  for (let id in players) { 
+    let player = players[id];
     context.beginPath();
     context.strokeRect(scaleW*player.x, scaleH*player.y, player.width*scaleW, player.height*scaleH);
   }

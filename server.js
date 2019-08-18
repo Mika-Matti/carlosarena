@@ -19,20 +19,22 @@ app.use(express.static('public'));
 //Port listening
 http.listen(PORT, function()
 {
-    console.log('Listening on port: ' + PORT); 
+    console.log('Listening on port: ' + PORT + '.'); 
 });
 
 //Game objects
 let players = {};
+//Screen size
+let mapHeight = 500;
+let mapWidth = 1000;
+
 //Socket handlers
 io.on('connection', function(socket) {
   console.log('New player connected. Connected: %s sockets connected.', (Object.keys(players).length+1));
-  //Boundaries
-  let mapHeight = 500;
-  let mapWidth = 1000;  
   //Player object
   socket.on('new player', function() {
     players[socket.id] = {
+      id: socket.id,
       height: 40,
       width: 20,
       x: getRandomValue(10, 990),
@@ -42,10 +44,12 @@ io.on('connection', function(socket) {
       gravity: 0.5,
       jumping: true,
     }; 
+    //Send client identification data
+    socket.emit('clientid', players[socket.id]);
   });
   //Player movement
   socket.on('movement', function(data) {
-    var player = players[socket.id] || {};
+    let player = players[socket.id] || {};
     //Received control commands
     if (data.left) {
       player.x -= player.speed;
@@ -84,3 +88,4 @@ setInterval(function() {
 function getRandomValue(min, max) {
   return Math.random() * (max - min) + min;
 }
+
