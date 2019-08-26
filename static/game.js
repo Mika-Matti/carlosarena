@@ -101,9 +101,18 @@ let origo = 0;
 let offset = 0;
 
 socket.on('state', function(players) {
-  //Draw players
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.strokeStyle = 'black';
+ 
+  //Render 2 random pieces clientside, replace these later when you make a proper map
+  context.fillStyle = 'white';
+  context.fillRect(scaleW*20-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
+  context.strokeRect(scaleW*20-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
+
+  context.fillRect(scaleW*930-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
+  context.strokeRect(scaleW*930-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
+
+  //Draw players
   for (let id in players) { 
     let player = players[id];
     context.beginPath();
@@ -112,15 +121,16 @@ socket.on('state', function(players) {
         origo = scaleW*player.x; //Get the center point
         offset = origo-500*scaleW-(player.width*scaleW)/2; //Checks how far the spawn coords are from 500
       }
+      context.fillStyle = 'gray';
       clientPlayerx = scaleW*player.x-origo; //Move everything based on origo. e.g origo-offset keeps player centered
+      context.fillRect(origo-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Color client player
       context.strokeRect(origo-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Draw client player
 
     } else {
+      context.fillStyle = 'yellow';
+      context.fillRect(scaleW*player.x-clientPlayerx-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Color other players
       context.strokeRect(scaleW*player.x-clientPlayerx-offset, scaleH*player.y, player.width*scaleW, player.height*scaleH); //Draw other players
     }
-    //Render 2 random pieces clientside, replace these later when you make a proper map
-    context.strokeRect(scaleW*20-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
-    context.strokeRect(scaleW*930-clientPlayerx-offset, scaleH*350, 50*scaleW, 150*scaleH);
   }
 });
 
